@@ -14,7 +14,6 @@ RUN apk add --no-cache \
   musl-dev
 RUN git clone https://github.com/lomik/go-carbon.git /opt/go-carbon && \
   cd /opt/go-carbon/ && \
-  make submodules && \
   make && \
   mv go-carbon /usr/bin/go-carbon
 RUN export PYTHONPATH="/opt/graphite/lib/:/opt/graphite/webapp/"  && \
@@ -22,7 +21,8 @@ RUN export PYTHONPATH="/opt/graphite/lib/:/opt/graphite/webapp/"  && \
   pip install https://github.com/graphite-project/graphite-web/tarball/master && \
   pip install gunicorn && \
   cp /opt/graphite/webapp/graphite/local_settings.py.example /opt/graphite/webapp/graphite/local_settings.py && \
-  cp /opt/graphite/conf/graphite.wsgi.example /opt/graphite/webapp/graphite/graphite_wsgi.py
+  cp /opt/graphite/conf/graphite.wsgi.example /opt/graphite/webapp/graphite/graphite_wsgi.py && \
+  mkdir -p /opt/graphite/storage/log/webapp
 COPY sys/ /
 RUN PYTHONPATH=/opt/graphite/webapp /usr/bin/django-admin migrate --settings=graphite.settings --run-syncdb && \
   PYTHONPATH=/opt/graphite/webapp /usr/bin/django-admin collectstatic --noinput --settings=graphite.settings
